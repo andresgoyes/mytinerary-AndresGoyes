@@ -48,7 +48,7 @@ const Slider = ({ data }) => {
                         slidesPerGroup: 4,
                     }
                 }}
-                className='mySwiper'
+                className='mySwiper w-[90%] sm:w-[80%] mx-auto' 
             >
                 {data.map((d, i) => (
                     <SwiperSlide key={i}>
