@@ -40,7 +40,7 @@ const Footer = () => {
         <div className="flex flex-col space-y-3">
           <h1 className="font-bold">Travel</h1>
           <a className="text-xs text-gray-900" href="/">
-            About Us
+            Cities
           </a>
           <a className="text-xs text-gray-900" href="/">
             Services
