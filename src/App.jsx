@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import Slider from './components/Slider';
 import Cities from './pages/Cities';
+import NotFound from './pages/NotFound';
 import StandarLayout from './Layouts/StandarLayout';
 import './App.css';
 
@@ -35,6 +36,7 @@ function App() {
             } 
           />          
           <Route path="/cities" element={<Cities />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </Router>
