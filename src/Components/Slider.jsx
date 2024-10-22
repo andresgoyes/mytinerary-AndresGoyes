@@ -1,15 +1,34 @@
+import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { useNavigate } from 'react-router-dom';
 
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css';
 import '../Styles/Slider.css';
 
-const Slider = ({ data }) => {
-    if (!data || data.length === 0) {
-        return <p>No hay datos disponibles para mostrar</p>;
-    }
+const Cities = () => {
+    const [cities, setCities] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchCities = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/cities/all');
+                const data = await response.json();
+                setCities(data.response);                
+            } catch (error) {
+                console.error('Error fetching cities:', error);
+            }
+        };
+
+        fetchCities();
+    }, []);
+    
+    const handleCardClick = (cityId) => {
+        navigate(`/city/${cityId}`);
+    };
 
     return (
         <>
@@ -22,7 +41,7 @@ const Slider = ({ data }) => {
                 navigation={true}
                 modules={[Navigation, Pagination, Autoplay]}
                 pagination={{ dynamicBullets: true }}
-                autoplay={{ 
+                autoplay={{
                     delay: 5000,
                     disableOnInteraction: false
                 }}
@@ -48,21 +67,24 @@ const Slider = ({ data }) => {
                         slidesPerGroup: 4,
                     }
                 }}
-                className='mySwiper w-[90%] sm:w-[80%] mx-auto' 
+                className='mySwiper w-[90%] sm:w-[80%] mx-auto'
             >
-                {data.map((d, i) => (
+                {cities.map((city, i) => (
                     <SwiperSlide key={i}>
-                        <div className='w-96 slider-item mb-6 relative shadow-lg rounded-xl overflow-hidden'>
+                        <div 
+                            className='w-96 slider-item mb-6 relative shadow-lg rounded-xl overflow-hidden cursor-pointer'
+                            onClick={() => handleCardClick(city._id)}
+                        >
                             <div className='image-container flex justify-center items-center'>
                                 <img
-                                    src={d.img}
-                                    alt={d.name}
+                                    src={city.photo}
+                                    alt={city.name}
                                     className='slider-image'
-                                    loading="lazy"                                     
+                                    loading="lazy"
                                 />
                                 <div className='overlay absolute bottom-0 left-0 w-full h-full bg-black bg-opacity-25'></div>
                                 <p className='text-overlay absolute bottom-4 left-4 text-white font-bold text-xl bg-opacity-75 bg-black p-2 rounded-lg'>
-                                    {d.name}
+                                    {city.name}
                                 </p>
                             </div>
                         </div>
@@ -73,4 +95,4 @@ const Slider = ({ data }) => {
     );
 };
 
-export default Slider;
+export default Cities;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUpIcon } from '@heroicons/react/24/outline'; // Puedes usar un ícono de flecha hacia arriba
+import { ArrowUpIcon } from '@heroicons/react/24/outline';
 
 export default function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
