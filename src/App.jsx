@@ -4,6 +4,7 @@ import Slider from './components/Slider';
 import Cities from './pages/Cities';
 import NotFound from './pages/NotFound';
 import StandarLayout from './Layouts/StandarLayout';
+import CityDetail from './Components/CityDetail';
 import './App.css';
 
 const data = [
@@ -36,6 +37,7 @@ function App() {
             } 
           />          
           <Route path="/cities" element={<Cities />} />
+          <Route path="/city/:id" element={<CityDetail />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
