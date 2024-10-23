@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Menu } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLocation } from 'react-router-dom';
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
-  { name: 'Cities', href: '/cities', current: false }
+  { name: 'Cities', href: '/cities', current: false } // Asegúrate de que el nombre sea correcto
 ];
 
 function classNames(...classes) {
@@ -15,6 +15,7 @@ function classNames(...classes) {
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const menuRef = useRef(null); // Crea un ref para el menú
 
   useEffect(() => {
     if (menuOpen) {
@@ -22,6 +23,21 @@ export default function Header() {
     } else {
       document.body.style.overflow = 'auto';
     }
+
+    // Función para manejar clics fuera del menú
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false); // Cierra el menú si se hace clic fuera
+      }
+    };
+
+    // Agrega el evento de clic
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Limpia el evento al desmontar
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [menuOpen]);
 
   return (
@@ -120,7 +136,7 @@ export default function Header() {
       </div>
 
       {menuOpen && (
-        <div className="sm:hidden bg-gray-800 relative z-50">
+        <div ref={menuRef} className="sm:hidden bg-gray-800 relative z-50">
           <div className="space-y-1 px-2 pb-3 pt-2">
             {navigation.map((item) => (
               <Link
@@ -133,17 +149,13 @@ export default function Header() {
                   'block rounded-md px-3 py-2 text-base font-medium'
                 )}
                 aria-current={location.pathname === item.href ? 'page' : undefined}
-                onClick={() => setMenuOpen(false)}  
+                onClick={() => setMenuOpen(false)}  // Cierra el menú al hacer clic
               >
                 {item.name}
               </Link>
             ))}
           </div>
-
-          <div
-            className="fixed inset-0 bg-black bg-opacity-25"
-            onClick={() => setMenuOpen(false)}  
-          />
+          <div onClick={() => setMenuOpen(false)} />
         </div>
       )}
     </nav>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import {
   AiFillFacebook,
   AiFillInstagram,
@@ -11,7 +11,7 @@ const CallToAction = () => {
     <div className="w-full absolute top-0 h-screen flex flex-col space-y-10 justify-center items-center mx-auto z-10">
       <div className="text-white text-center space-y-5">
         <h1 className="text-neutral-100 text-5xl font-bold cursor-default">MyTinerary</h1>
-        <p className="text-neutral-100 cursor-default w-2/3 mx-auto">
+        <p className="text-neutral-100 text-2xl cursor-default w-2/3 mx-auto">
           Find your perfect trip, designed by insiders who know and love their cities!
         </p>
       </div>

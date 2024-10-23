@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 
 import {
   AiFillFacebook,
@@ -39,9 +40,9 @@ const Footer = () => {
 
         <div className="flex flex-col space-y-3">
           <h1 className="font-bold">Travel</h1>
-          <a className="text-xs text-gray-900" href="/">
+          <Link className="text-xs text-gray-900" to="/cities">
             Cities
-          </a>
+          </Link>
           <a className="text-xs text-gray-900" href="/">
             Services
           </a>
