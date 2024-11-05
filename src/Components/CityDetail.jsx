@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCityDetail } from '../store/actions/cityDetailActions';
 import Itineraries from './Itineraries';
 
 const CityDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [city, setCity] = useState(null);
-
+    const dispatch = useDispatch();
+        
+    const cityDetail = useSelector(state => state.cityDetail);
+    
     useEffect(() => {
-        const fetchCityDetail = async () => {
-            const response = await fetch(`http://localhost:8080/api/cities/id/${id}`);
-            const data = await response.json();
-            setCity(data.response);
-        };
-
-        fetchCityDetail();
-    }, [id]);
-
-    // Función para desplazarse a la sección de itinerarios
+        dispatch(fetchCityDetail(id));
+    }, [dispatch, id]);
+    
     const scrollToItineraries = () => {
         const itinerariesSection = document.getElementById('itineraries');
         if (itinerariesSection) {
@@ -25,7 +22,10 @@ const CityDetail = () => {
         }
     };
 
-    if (!city) return <div>Loading...</div>;
+    if (cityDetail.loading) return <div>Loading...</div>;
+    if (cityDetail.error) return <div>Error: {cityDetail.error}</div>;
+
+    const city = cityDetail.city;
 
     return (
         <div>

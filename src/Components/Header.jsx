@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 const navigation = [
   { name: 'Home', href: '/', current: false },
-  { name: 'Cities', href: '/cities', current: false } // Asegúrate de que el nombre sea correcto
+  { name: 'Cities', href: '/cities', current: false }
 ];
 
 function classNames(...classes) {
@@ -15,7 +15,7 @@ function classNames(...classes) {
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const menuRef = useRef(null); // Crea un ref para el menú
+  const menuRef = useRef(null);
 
   useEffect(() => {
     if (menuOpen) {
@@ -24,17 +24,14 @@ export default function Header() {
       document.body.style.overflow = 'auto';
     }
 
-    // Función para manejar clics fuera del menú
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false); // Cierra el menú si se hace clic fuera
+        setMenuOpen(false);
       }
     };
 
-    // Agrega el evento de clic
     document.addEventListener('mousedown', handleClickOutside);
-    
-    // Limpia el evento al desmontar
+        
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -43,7 +40,7 @@ export default function Header() {
   return (
     <nav className="bg-gray-800 z-20 relative max-w-8xl mx-auto h-16">
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Botón del menú hamburguesa (solo visible en pantallas pequeñas) */}
+        {/* Menú hamburguesa - pantallas pequeñas */}
         <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -70,7 +67,7 @@ export default function Header() {
         </div>
 
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-          {/* Enlaces visibles en pantallas grandes */}
+          {/* Enlaces - pantallas grandes */}
           <div className="hidden sm:ml-6 sm:block">
             <div className="flex space-x-4">
               {navigation.map((item) => (
@@ -149,7 +146,7 @@ export default function Header() {
                   'block rounded-md px-3 py-2 text-base font-medium'
                 )}
                 aria-current={location.pathname === item.href ? 'page' : undefined}
-                onClick={() => setMenuOpen(false)}  // Cierra el menú al hacer clic
+                onClick={() => setMenuOpen(false)}
               >
                 {item.name}
               </Link>
