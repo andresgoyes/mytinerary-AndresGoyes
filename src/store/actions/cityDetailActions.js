@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 export const FETCH_CITY_DETAIL_REQUEST = 'FETCH_CITY_DETAIL_REQUEST';
 export const FETCH_CITY_DETAIL_SUCCESS = 'FETCH_CITY_DETAIL_SUCCESS';

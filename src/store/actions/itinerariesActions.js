@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const FETCH_ITINERARIES_REQUEST = 'FETCH_ITINERARIES_REQUEST';
 export const FETCH_ITINERARIES_SUCCESS = 'FETCH_ITINERARIES_SUCCESS';
 export const FETCH_ITINERARIES_FAILURE = 'FETCH_ITINERARIES_FAILURE';
@@ -20,12 +22,10 @@ export const fetchItineraries = (cityId) => {
     return async (dispatch) => {
         dispatch(fetchItinerariesRequest());
         try {
-            const response = await fetch(`http://localhost:8080/api/itineraries/itinerary/${cityId}`);
-            if (!response.ok) throw new Error('Error fetching itineraries');
-            const data = await response.json();
-            dispatch(fetchItinerariesSuccess(data.response));
+            const response = await axios.get(`http://localhost:8080/api/itineraries/itinerary/${cityId}`);
+            dispatch(fetchItinerariesSuccess(response.data.response)); // Axios ya convierte la respuesta a JSON
         } catch (error) {
-            dispatch(fetchItinerariesFailure(error.message));
+            dispatch(fetchItinerariesFailure(error.message)); // El error también está disponible como error.response.data
         }
     };
 };
