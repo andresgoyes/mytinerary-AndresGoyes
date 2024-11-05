@@ -23,11 +23,25 @@ const Itineraries = () => {
     };
 
     const handleLike = (itineraryId) => {
-        setLikedItineraries((prevLiked) => ({
-            ...prevLiked,
-            [itineraryId]: !prevLiked[itineraryId],
-        }));
+        setLikedItineraries((prevLiked) => {
+            const isLiked = prevLiked[itineraryId];
+            // Si ya estaba liked, restamos 1, si no, sumamos 1
+            return {
+                ...prevLiked,
+                [itineraryId]: !isLiked,
+            };
+        });
     };
+
+    // Actualizar los itinerarios con los likes calculados
+    const updatedItineraries = itineraries.map(itinerary => {
+        const isLiked = likedItineraries[itinerary._id] || false;
+        const newLikes = isLiked ? itinerary.likes + 1 : itinerary.likes - 1; // Si está liked, suma 1, si no, resta 1
+        return {
+            ...itinerary,
+            likes: newLikes < 0 ? 0 : newLikes, // Asegúrate de que los likes no sean negativos
+        };
+    });
 
     if (loading) return <div>Loading itineraries...</div>;
     if (error) return <div><p className="text-gray-700 text-xl">No itineraries found for this city.</p></div>;
@@ -37,8 +51,8 @@ const Itineraries = () => {
             <section id="itineraries" className="space-y-10 text-neutral-500 dark:text-neutral-300 text-center">
                 <h1 className="text-5xl font-bold">ITINERARIES</h1>
                 <div className="flex flex-wrap justify-center gap-12">
-                    {itineraries.length > 0 ? (
-                        itineraries.map((itinerary) => (
+                    {updatedItineraries.length > 0 ? (
+                        updatedItineraries.map((itinerary) => (
                             <div key={itinerary._id} className="relative overflow-hidden w-full sm:w-[min(100%,40rem)] h-auto border bg-slate-50 dark:bg-black dark:border dark:border-slate-700 rounded-lg shadow-xl p-8 flex flex-col items-start">
                                 <div className="flex items-start w-full">
                                     <div className="items-center">

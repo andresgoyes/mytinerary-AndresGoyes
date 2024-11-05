@@ -11,8 +11,12 @@ const Cities = () => {
     const { cities, loading, error } = useSelector((state) => state.cities);
 
     useEffect(() => {
-        dispatch(fetchCities(searchValue));
-    }, [dispatch, searchValue]);
+        dispatch(fetchCities());
+    }, [dispatch]);
+    
+    const filteredCities = cities.filter((city) =>
+        city.name.toLowerCase().startsWith(searchValue.toLowerCase())
+    );
 
     return (
         <>
@@ -31,11 +35,11 @@ const Cities = () => {
                     <div className="max-w-max col-span-1 sm:col-span-2 lg:col-span-4 flex justify-center">
                         <div className="flex flex-col text-center gap-2 text-neutral-500 dark:text-neutral-300 bg-slate-300 dark:bg-slate-700 shadow-lg rounded-md p-4 w-full">
                             <i className="text-9xl fas fa-exclamation-triangle"></i>
-                            <h2 className="text-4xl font-semibold">No Results Found</h2>
-                            <p className="text-2xl">We couldn't find any cities with the provided name.</p>
+                            <h2 className="text-4xl font-semibold">Error</h2>
+                            <p className="text-2xl">{error}</p>
                         </div>
                     </div>
-                ) : cities.length === 0 ? (
+                ) : filteredCities.length === 0 ? (
                     <div className="max-w-max col-span-1 sm:col-span-2 lg:col-span-4 flex justify-center">
                         <div className="flex flex-col text-center gap-2 text-neutral-500 dark:text-neutral-300 bg-slate-300 dark:bg-slate-700 shadow-lg rounded-md p-4 w-full">
                             <i className="text-9xl fas fa-exclamation-triangle"></i>
@@ -45,7 +49,7 @@ const Cities = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {cities.map((city) => (
+                        {filteredCities.map((city) => (
                             <div key={city._id} className="flex justify-center">
                                 <CityCard city={city} />
                             </div>
