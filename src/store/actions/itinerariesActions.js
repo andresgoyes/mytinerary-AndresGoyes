@@ -23,9 +23,9 @@ export const fetchItineraries = (cityId) => {
         dispatch(fetchItinerariesRequest());
         try {
             const response = await axios.get(`http://localhost:8080/api/itineraries/itinerary/${cityId}`);
-            dispatch(fetchItinerariesSuccess(response.data.response)); // Axios ya convierte la respuesta a JSON
+            dispatch(fetchItinerariesSuccess(response.data.response));
         } catch (error) {
-            dispatch(fetchItinerariesFailure(error.message)); // El error también está disponible como error.response.data
+            dispatch(fetchItinerariesFailure(error.message));
         }
     };
 };
