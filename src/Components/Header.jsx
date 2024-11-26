@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Menu } from '@headlessui/react';
+import { useDispatch, useSelector } from 'react-redux'; // Asegúrate de tener acceso a dispatch
+import { logout } from '../store/actions/authActions'; // Importa la acción de logout
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const navigation = [
-  { name: 'Home', href: '/', current: false },
-  { name: 'Cities', href: '/cities', current: false }
+  { name: 'Home', href: '/' },
+  { name: 'Cities', href: '/cities' }
 ];
 
 function classNames(...classes) {
@@ -13,71 +15,77 @@ function classNames(...classes) {
 }
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); 
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location = useLocation();
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
+  const dispatch = useDispatch();  // Usar dispatch para despachar la acción de logout
+  const user = useSelector((state) => state.auth.user);  // Accedemos al estado del usuario
+
+  // useEffect para ver los datos del usuario
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
+    if (user) {
+      console.log("Email del usuario:", user.email);
+      console.log("Link de la foto del usuario:", user.photoUrl || 'Foto no disponible');
     } else {
-      document.body.style.overflow = 'auto';
+      console.log("No hay usuario logueado.");
     }
+  }, [user]);
 
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false);
-      }
-    };
+  const handleLogout = () => {
+    // Despachamos la acción de logout para actualizar el estado global
+    dispatch(logout());
+    navigate('/login'); // Redirigir a login después de hacer logout
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
-        
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [menuOpen]);
+  const handleHamburgerMenuToggle = () => {
+    setMenuOpen(!menuOpen);
+    if (userMenuOpen) {
+      setUserMenuOpen(false); 
+    }
+  };
+
+  const handleUserMenuToggle = () => {
+    setUserMenuOpen(!userMenuOpen);
+    if (menuOpen) {
+      setMenuOpen(false); 
+    }
+  };
 
   return (
     <nav className="bg-gray-800 z-20 relative max-w-8xl mx-auto h-16">
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Menú hamburguesa - pantallas pequeñas */}
+        {/* Menú hamburguesa */}
         <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            onClick={handleHamburgerMenuToggle} 
+            className="p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
           >
             <span className="sr-only">Open main menu</span>
-            {menuOpen ? (
-              <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-            ) : (
-              <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-            )}
+            {menuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
           </button>
         </div>
 
+        {/* Logo */}
         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
           <div className="flex flex-shrink-0 items-center">
-            <img
-              className="h-9 w-auto"
-              src='/images/logo.png'
-              alt="Your Company"
-            />
-            <span className="ml-0 text-white px-3 py-3 text-2xl font-bold hidden md:block">MyTinerary</span>
+            <img className="h-9 w-auto" src='https://cdn-icons-png.flaticon.com/512/2038/2038294.png' alt="Logo" />
+            <span className="ml-3 text-white text-2xl font-bold hidden md:block">MyTinerary</span>
           </div>
         </div>
 
+        {/* Navegación en pantallas grandes */}
         <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-          {/* Enlaces - pantallas grandes */}
-          <div className="hidden sm:ml-6 sm:block">
+          <div className="hidden sm:block">
             <div className="flex space-x-4">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={classNames(
-                    location.pathname === item.href
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    location.pathname === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                     'rounded-md px-3 py-5 text-sm text-white font-bold'
                   )}
                   aria-current={location.pathname === item.href ? 'page' : undefined}
@@ -91,47 +99,63 @@ export default function Header() {
           {/* Menú de usuario */}
           <Menu as="div" className="relative ml-3">
             <div>
-              <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+              <MenuButton
+                onClick={handleUserMenuToggle} 
+                className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+              >
                 <span className="sr-only">Open user menu</span>
                 <img
                   className="h-9 w-9 rounded-full"
-                  src='/images/user.png'
+                  src={user?.photoUrl || '/images/user.png'}
                   alt="User"
                 />
-              </Menu.Button>
+              </MenuButton>
             </div>
-            <Menu.Items className="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100' : '',
-                      'block px-4 py-2 text-sm text-gray-700'
+            <MenuItems className="absolute right-0 z-50 mt-2 w-50 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+              {user ? (
+                <>
+                  <MenuItem>
+                    {({ active }) => (
+                      <a className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                        {user.email}
+                      </a>
                     )}
-                  >
-                    Login
-                  </a>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100' : '',
-                      'block px-4 py-2 text-sm text-gray-700'
+                  </MenuItem>
+                  <MenuItem>
+                    {({ active }) => (
+                      <a onClick={handleLogout} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H3" />
+                        </svg>
+                        Logout
+                      </a>
                     )}
-                  >
-                    Register
-                  </a>
-                )}
-              </Menu.Item>
-            </Menu.Items>
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem>
+                    {({ active }) => (
+                      <Link to="/login" className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                        Login
+                      </Link>
+                    )}
+                  </MenuItem>
+                  <MenuItem>
+                    {({ active }) => (
+                      <Link to="/register" className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                        Register
+                      </Link>
+                    )}
+                  </MenuItem>
+                </>
+              )}
+            </MenuItems>
           </Menu>
         </div>
       </div>
 
+      {/* Menú en móvil */}
       {menuOpen && (
         <div ref={menuRef} className="sm:hidden bg-gray-800 relative z-50">
           <div className="space-y-1 px-2 pb-3 pt-2">
@@ -140,9 +164,7 @@ export default function Header() {
                 key={item.name}
                 to={item.href}
                 className={classNames(
-                  location.pathname === item.href
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                  location.pathname === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                   'block rounded-md px-3 py-2 text-base font-medium'
                 )}
                 aria-current={location.pathname === item.href ? 'page' : undefined}
@@ -152,7 +174,6 @@ export default function Header() {
               </Link>
             ))}
           </div>
-          <div onClick={() => setMenuOpen(false)} />
         </div>
       )}
     </nav>
