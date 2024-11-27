@@ -87,7 +87,15 @@ const LoginForm = () => {
                 variant="contained"
                 color="secondary"
                 fullWidth
-                sx={{ mt: 2, backgroundColor: "#0186F9", color: "#fff" }}
+                sx={{ mt: 2 }}
+                startIcon={
+                    <img
+                        src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+                        alt="Google icon"
+                        height={24}
+                        width={24}
+                    />
+                }
             >
                 Login with Google
             </Button>

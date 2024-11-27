@@ -1,38 +1,70 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import StandarLayout from './Layouts/StandarLayout';
 import Home from './pages/Home';
 import Cities from './pages/Cities';
-import NotFound from './pages/NotFound';
-import StandarLayout from './Layouts/StandarLayout';
 import CityDetail from './Components/CityDetail';
-import Register from './pages/Register';
 import Login from './pages/Login';
-import './App.css';
+import Register from './pages/Register';
+import NotFound from './pages/NotFound';
+import SignRoute from './Components/SignRoute';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setUser } from './store/actions/authActions';
+import { useEffect, useState } from 'react';
 
-function App() {  
+const router = createBrowserRouter([
+  {
+    element: <StandarLayout></StandarLayout>,
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/home", element: <Home /> },
+      { path: "/register", element: <SignRoute><Register /></SignRoute> },
+      { path: "/login", element: <SignRoute><Login /></SignRoute>  },
+      { path: "/cities", element: <Cities /> },
+      { path: "/city/:id", element: <CityDetail /> },      
+      { path: "*", element: <NotFound /> },
+    ],
+  },
+]);
 
-  return (
-    <Router> 
-      <Routes>
-        <Route element={<StandarLayout />}>
-          <Route 
-            path="/" 
-            element={
-              <>
-                <Home />                
-              </>
-            } 
-          />  
-          <Route path="/register" element={<Register />} />        
-          <Route path="/login" element={<Login />} />  
-          <Route path="/home" element={<Home />} />
-          <Route path="/cities" element={<Cities />} />
-          <Route path="/city/:id" element={<CityDetail />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Router>
-  );
+const loginWithToken = async (token) => {
+  try {
+    const response = await axios.get("http://localhost:8080/api/users/validateToken", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.response;
+  } catch (error) {
+    console.error("Error validating the token", error);
+    return null;
+  }
+};
+
+function App() {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      loginWithToken(token).then((user) => {
+        if (user) {
+          dispatch(setUser({ user, token }));
+        } 
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
+    }
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;
