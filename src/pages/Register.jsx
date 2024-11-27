@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCities } from "../store/actions/citiesActions"; 
-import { TextField, Button, MenuItem, Typography, Box } from "@mui/material";
+import { TextField, Button, MenuItem, Typography, Box, Snackbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -11,15 +11,13 @@ const useCreateUser = () => {
     const createUser = async (formData) => {
         try {
             const response = await axios.post("http://localhost:8080/api/users/register", formData);
-            alert(response.data.message || "User created successfully");
             navigate("/login"); 
             return response.data;
         } catch (error) {
             const errorMessage = error.response?.data?.message?.join(", ") || 
                                  error.response?.data?.response || 
-                                 "Error";
-            alert(errorMessage);
-            return error;
+                                 "Error occurred during registration.";
+            return errorMessage;
         }
     };
 
@@ -30,6 +28,7 @@ const UserForm = () => {
     const dispatch = useDispatch();
     const { cities, loading } = useSelector((state) => state.cities);
     const { createUser } = useCreateUser();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         name: "",
@@ -39,6 +38,9 @@ const UserForm = () => {
         photoUrl: "",
         country: "",
     });
+
+    const [errorMessage, setErrorMessage] = useState("");  // State to handle error messages
+    const [successMessage, setSuccessMessage] = useState("");  // State to handle success messages
 
     useEffect(() => {
         dispatch(fetchCities());
@@ -56,20 +58,26 @@ const UserForm = () => {
         const missingFields = requiredFields.filter(field => !formData[field]);
 
         if (missingFields.length > 0) {
-            alert(`Los siguientes campos son obligatorios: ${missingFields.join(", ")}`);
+            setErrorMessage(`Please fill in the following fields: ${missingFields.join(", ")}`);
             return;
         }
 
-        await createUser(formData);
+        const response = await createUser(formData);
+
+        if (response?.message) {
+            setSuccessMessage(response.message || "User created successfully");
+        } else {
+            setErrorMessage(response || "An error occurred during registration.");
+        }
     };
 
-    const uniqueCountries = useMemo(() => [
-        ...new Set(cities.map((city) => city.country)),
-    ], [cities]);
-    
+    const uniqueCountries = useMemo(() => {
+        return [...new Set(cities.map((city) => city.country))];
+    }, [cities]);
+
     const loginWithGoogle = () => {
-        window.location.href = 'http://localhost:8080/api/auth/signIn/google'
-    }
+        window.location.href = 'http://localhost:8080/api/auth/signIn/google';
+    };
 
     return (
         <Box
@@ -108,7 +116,7 @@ const UserForm = () => {
             ))}
 
             {loading ? (
-                <Typography>Loading...</Typography>
+                <Typography>Loading countries...</Typography>
             ) : (
                 <TextField
                     fullWidth
@@ -154,6 +162,22 @@ const UserForm = () => {
             >
                 Register with Google
             </Button>
+
+            {/* Success Snackbar */}
+            <Snackbar
+                open={Boolean(successMessage)}
+                autoHideDuration={6000}
+                onClose={() => setSuccessMessage("")}
+                message={successMessage}
+            />
+
+            {/* Error Snackbar */}
+            <Snackbar
+                open={Boolean(errorMessage)}
+                autoHideDuration={6000}
+                onClose={() => setErrorMessage("")}
+                message={errorMessage}
+            />
         </Box>
     );
 };

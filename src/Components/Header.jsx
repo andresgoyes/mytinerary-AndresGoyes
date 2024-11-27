@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from 'react-redux'; // Asegúrate de tener acceso a dispatch
-import { logout } from '../store/actions/authActions'; // Importa la acción de logout
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../store/actions/authActions';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -20,43 +20,32 @@ export default function Header() {
   const location = useLocation();
   const menuRef = useRef(null);
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();  // Usar dispatch para despachar la acción de logout
-  const user = useSelector((state) => state.auth.user);  // Accedemos al estado del usuario
-
-  // useEffect para ver los datos del usuario
-  useEffect(() => {
-    if (user) {
-      console.log("Email del usuario:", user.email);
-      console.log("Link de la foto del usuario:", user.photoUrl || 'Foto no disponible');
-    } else {
-      console.log("No hay usuario logueado.");
-    }
-  }, [user]);
+  const dispatch = useDispatch();  
+  const user = useSelector((state) => state.auth.user);  
 
   const handleLogout = () => {
-    // Despachamos la acción de logout para actualizar el estado global
     dispatch(logout());
-    navigate('/login'); // Redirigir a login después de hacer logout
+    navigate('/login');
   };
 
   const handleHamburgerMenuToggle = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen(prev => !prev);
     if (userMenuOpen) {
-      setUserMenuOpen(false); 
+      setUserMenuOpen(false);
     }
   };
 
   const handleUserMenuToggle = () => {
-    setUserMenuOpen(!userMenuOpen);
+    setUserMenuOpen(prev => !prev);
     if (menuOpen) {
-      setMenuOpen(false); 
+      setMenuOpen(false);
     }
   };
 
   return (
     <nav className="bg-gray-800 z-20 relative max-w-8xl mx-auto h-16">
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
+        
         {/* Menú hamburguesa */}
         <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
@@ -86,7 +75,7 @@ export default function Header() {
                   to={item.href}
                   className={classNames(
                     location.pathname === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'rounded-md px-3 py-5 text-sm text-white font-bold'
+                    'rounded-md px-3 py-5 text-sm font-bold'
                   )}
                   aria-current={location.pathname === item.href ? 'page' : undefined}
                 >

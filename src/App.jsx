@@ -1,5 +1,9 @@
-import './App.css';
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+// App.jsx
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import axios from 'axios';
+import { setUser } from './store/actions/authActions';
 import StandarLayout from './Layouts/StandarLayout';
 import Home from './pages/Home';
 import Cities from './pages/Cities';
@@ -8,10 +12,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 import SignRoute from './Components/SignRoute';
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setUser } from './store/actions/authActions';
-import { useEffect, useState } from 'react';
 
 const router = createBrowserRouter([
   {
@@ -31,9 +31,7 @@ const router = createBrowserRouter([
 const loginWithToken = async (token) => {
   try {
     const response = await axios.get("http://localhost:8080/api/users/validateToken", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.data.response;
   } catch (error) {
@@ -52,7 +50,7 @@ function App() {
       loginWithToken(token).then((user) => {
         if (user) {
           dispatch(setUser({ user, token }));
-        } 
+        }
         setIsLoading(false);
       });
     } else {
