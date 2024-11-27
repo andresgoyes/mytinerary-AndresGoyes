@@ -106,7 +106,7 @@ export default function Header() {
                 <span className="sr-only">Open user menu</span>
                 <img
                   className="h-9 w-9 rounded-full"
-                  src={user?.photoUrl || '/images/user.png'}
+                  src={user?.photoUrl || 'https://cdn-icons-png.flaticon.com/512/2990/2990279.png'}
                   alt="User"
                 />
               </MenuButton>

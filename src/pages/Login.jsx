@@ -4,43 +4,35 @@ import { login } from "../store/actions/authActions";
 import { TextField, Button, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const useLogin = () => {
+const LoginForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const signIn = async (email, password) => {        
-        const success = await dispatch(login({ email, password }));
-
-        if (success) {            
-            navigate("/");
-        } else {
-            alert("Invalid credentials");
-        }
-    };
-
-    return { signIn };
-};
-
-const LoginForm = () => {
-    const { signIn } = useLogin();
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+    const [formData, setFormData] = useState({ email: "", password: "" });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const { email, password } = formData;
+
         if (!email || !password) {
-            alert("Please fill all");
+            alert("Please fill in all fields");
             return;
         }
-        signIn(email, password);
+
+        const success = await dispatch(login({ email, password }));
+        if (success) {
+            navigate("/");
+        } else {
+            alert("Invalid credentials. Please try again.");
+        }
+    };
+
+    const loginWithGoogle = () => {
+        window.location.href = "http://localhost:8080/api/auth/signIn/google";
     };
 
     return (
@@ -54,18 +46,17 @@ const LoginForm = () => {
                 p: 3,
                 borderRadius: 2,
                 backgroundColor: "background.paper",
-                boxShadow: 3
-                
+                boxShadow: 3,
             }}
         >
             <Typography variant="h4" component="h2" fontWeight="bold" gutterBottom>
                 Sign In
             </Typography>
-         
+
             <Typography variant="body1" color="text.secondary" paragraph>
-                Welcome, enter your credentials.
+                Welcome! Enter your credentials to access the app.
             </Typography>
-            
+
             <TextField
                 fullWidth
                 label="Email"
@@ -87,14 +78,18 @@ const LoginForm = () => {
                 margin="normal"
             />
 
-            <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2 }}
-            >
+            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
                 Login
+            </Button>
+
+            <Button
+                onClick={loginWithGoogle}
+                variant="contained"
+                color="secondary"
+                fullWidth
+                sx={{ mt: 2, backgroundColor: "#0186F9", color: "#fff" }}
+            >
+                Login with Google
             </Button>
         </Box>
     );
