@@ -32,7 +32,7 @@ const LoginForm = () => {
     };
 
     const loginWithGoogle = () => {
-        window.location.href = "http://localhost:8080/api/auth/signIn/google";
+        window.location.href = "https://mytinerary-back-andresgoyes.onrender.com/api/auth/signin/google";
     };
 
     return (

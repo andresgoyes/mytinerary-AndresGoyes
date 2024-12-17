@@ -10,7 +10,7 @@ const useCreateUser = () => {
 
     const createUser = async (formData) => {
         try {
-            const response = await axios.post("http://localhost:8080/api/users/register", formData);
+            const response = await axios.post("https://mytinerary-back-andresgoyes.onrender.com/api/users/register", formData);
             navigate("/login"); 
             return response.data;
         } catch (error) {
@@ -76,7 +76,7 @@ const UserForm = () => {
     }, [cities]);
 
     const loginWithGoogle = () => {
-        window.location.href = 'http://localhost:8080/api/auth/signIn/google';
+        window.location.href = 'https://mytinerary-back-andresgoyes.onrender.com/api/auth/signin/google';
     };
 
     return (

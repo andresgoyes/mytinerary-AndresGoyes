@@ -20,7 +20,7 @@ const removeAuthData = () => {
 export const login = ({ email, password }) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
   try {
-    const response = await axios.post('http://localhost:8080/api/auth/signIn', { email, password });
+    const response = await axios.post('https://mytinerary-back-andresgoyes.onrender.com/api/auth/signIn', { email, password });
 
     if (response.data.success) {
       const { token, user } = response.data;

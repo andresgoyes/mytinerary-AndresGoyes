@@ -22,7 +22,7 @@ export const fetchItineraries = (cityId) => {
     return async (dispatch) => {
         dispatch(fetchItinerariesRequest());
         try {
-            const response = await axios.get(`http://localhost:8080/api/itineraries/itinerary/${cityId}`);
+            const response = await axios.get(`https://mytinerary-back-andresgoyes.onrender.com/api/itineraries/itinerary/${cityId}`);
             dispatch(fetchItinerariesSuccess(response.data.response));
         } catch (error) {
             dispatch(fetchItinerariesFailure(error.message));
