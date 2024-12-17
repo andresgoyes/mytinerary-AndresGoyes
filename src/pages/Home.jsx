@@ -7,7 +7,7 @@ import Hero from "../components/Hero";
 
 const loginWithToken = async (token) => {
   try {
-    const response = await axios.get("http://localhost:8080/api/users/validateToken", {
+    const response = await axios.get("https://mytinerary-back-andresgoyes.onrender.com/api/users/validateToken", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
